@@ -15,7 +15,7 @@ var (
 	query  = flag.String("for", "", "Type to generate an interface for.")
 	as     = flag.String("as", "main.Interface", `Generated interface name.`)
 	output = flag.String("o", "-", "Output file.")
-	all    = flag.Bool("all", false, "Include also unexproted methods.")
+	all    = flag.Bool("all", false, "Include also unexported methods.")
 )
 
 var tmpl = template.Must(template.New("").Parse(`// Created by interfacer; DO NOT EDIT

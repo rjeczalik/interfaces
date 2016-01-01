@@ -13,7 +13,7 @@ Generates an interface for a named type.
 ```
 Usage of interfacer:
   -all
-        Include also unexproted methods.
+        Include also unexported methods.
   -as string
         Generated interface name. (default "main.Interface")
   -for string
