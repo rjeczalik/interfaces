@@ -2,7 +2,8 @@ package interfaces
 
 import (
 	"fmt"
-	"go/types"
+
+	"golang.org/x/tools/go/types"
 )
 
 // Type

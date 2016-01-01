@@ -3,10 +3,10 @@ package interfaces
 import (
 	"errors"
 	"fmt"
-	"go/types"
 	"sort"
 
 	"golang.org/x/tools/go/loader"
+	"golang.org/x/tools/go/types"
 )
 
 // Interface
