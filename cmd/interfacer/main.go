@@ -26,6 +26,7 @@ import (
 {{range .Deps}}	"{{.}}"
 {{end}})
 
+// {{.InterfaceName}} is an interface generated for {{.Type}}.
 type {{.InterfaceName}} interface {
 {{range .Interface}}	{{.}}
 {{end}}}
@@ -34,6 +35,7 @@ type {{.InterfaceName}} interface {
 type Vars struct {
 	PackageName   string
 	InterfaceName string
+	Type          string
 	Deps          []string
 	Interface     interfaces.Interface
 }
@@ -73,6 +75,7 @@ func main() {
 		die(err)
 	}
 	v := &Vars{
+		Type:      *query,
 		Deps:      i.Deps(),
 		Interface: i,
 	}

@@ -36,6 +36,7 @@ import (
         "os"
 )
 
+// File is an interface generated for "os".File.
 type File interface {
         Chdir() error
         Chmod(os.FileMode) error
