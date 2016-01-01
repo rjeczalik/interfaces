@@ -52,8 +52,9 @@ func (q *Query) valid() error {
 
 // Options
 type Options struct {
-	Query   *Query
-	Context *build.Context
+	Query      *Query
+	Context    *build.Context
+	Unexported bool
 }
 
 func (opts *Options) context() *build.Context {

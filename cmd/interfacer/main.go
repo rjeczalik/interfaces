@@ -12,9 +12,10 @@ import (
 )
 
 var (
-	q      = flag.String("for", "", "Type to generate an interface for.")
+	query  = flag.String("for", "", "Type to generate an interface for.")
 	as     = flag.String("as", "main.Interface", `Generated interface name.`)
 	output = flag.String("o", "-", "Output file.")
+	all    = flag.Bool("all", false, "Include also unexproted methods.")
 )
 
 var tmpl = template.Must(template.New("").Parse(`// Created by interfacer; DO NOT EDIT
@@ -53,13 +54,21 @@ func die(v interface{}) {
 
 func main() {
 	flag.Parse()
-	if *q == "" {
-		die("empty -q flag value; see -help for details")
+	if *query == "" {
+		die("empty -for flag value; see -help for details")
 	}
 	if *output == "" {
 		die("empty -o flag value; see -help for details")
 	}
-	i, err := interfaces.New(*q)
+	q, err := interfaces.ParseQuery(*query)
+	if err != nil {
+		die(err)
+	}
+	opts := &interfaces.Options{
+		Query:      q,
+		Unexported: *all,
+	}
+	i, err := interfaces.NewWithOptions(opts)
 	if err != nil {
 		die(err)
 	}

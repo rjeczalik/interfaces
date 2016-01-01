@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"sort"
+	"unicode"
 
 	"golang.org/x/tools/go/loader"
 	"golang.org/x/tools/go/types"
@@ -109,6 +110,10 @@ func buildInterfaceForPkg(pkg *loader.PackageInfo, opts *Options) (Interface, er
 	var methods = make(map[string]*types.Func)
 	collectMethods(methods, typ, 0, nil)
 	for _, method := range methods {
+		// TODO(rjeczalik): read rune
+		if unicode.IsLower(rune(method.Name()[0])) && !opts.Unexported {
+			continue
+		}
 		sig, ok := method.Type().(*types.Signature)
 		if !ok {
 			continue
