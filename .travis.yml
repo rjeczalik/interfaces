@@ -1,0 +1,24 @@
+language: go
+
+go:
+ - 1.5.2
+ - tip
+
+matrix:
+  fast_finish: true
+
+sudo: false
+
+env:
+  global:
+   - GOBIN=$HOME/bin
+   - PATH=$HOME/bin:$PATH
+
+install:
+ - go get golang.org/x/tools/cmd/vet golang.org/x/tools/cmd/cover github.com/mattn/goveralls github.com/modocache/gover
+ - go get -t -v ./...
+
+script:
+ - go tool vet -all .
+ - go build ./...
+ - go test -race -v ./...
