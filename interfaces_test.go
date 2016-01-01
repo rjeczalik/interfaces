@@ -24,10 +24,10 @@ func TestParseQuery(t *testing.T) {
 			continue
 		}
 		if q.Package != query.Package {
-			t.Errorf("ParseQuery(%q): want package=%q; got %q", query.Package, q.Package)
+			t.Errorf("ParseQuery(%q): want package=%q; got %q", raw, query.Package, q.Package)
 		}
 		if q.TypeName != query.TypeName {
-			t.Errorf("ParseQuery(%q): want type=%q; got %q", query.TypeName, q.TypeName)
+			t.Errorf("ParseQuery(%q): want type=%q; got %q", raw, query.TypeName, q.TypeName)
 		}
 	}
 }
