@@ -15,7 +15,7 @@ env:
    - PATH=$HOME/bin:$PATH
 
 install:
- - go get golang.org/x/tools/cmd/vet golang.org/x/tools/cmd/cover github.com/mattn/goveralls github.com/modocache/gover
+ - go get golang.org/x/tools/cmd/vet
  - go get -t -v ./...
 
 script:
