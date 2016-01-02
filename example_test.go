@@ -91,7 +91,7 @@ func ExampleNewWithOptions() {
 	// net
 }
 
-func ExampleFuncString() {
+func ExampleFunc_String() {
 	f := interfaces.Func{
 		Name: "Close",
 		Outs: []interfaces.Type{{Name: "error"}},
