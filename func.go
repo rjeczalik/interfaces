@@ -6,14 +6,14 @@ import (
 	"sort"
 )
 
-// Func
+// Func represents an interface function.
 type Func struct {
-	Name string `json:"name,omitempty"`
-	Ins  []Type `json:"ins,omitempty"`
-	Outs []Type `json:"outs,omitempty"`
+	Name string `json:"name,omitempty"` // name of the function
+	Ins  []Type `json:"ins,omitempty"`  // input parameters
+	Outs []Type `json:"outs,omitempty"` // output parameters
 }
 
-// String
+// String gives Go code representation of the function.
 func (f Func) String() string {
 	var buf bytes.Buffer
 	if len(f.Ins) == 0 {
@@ -37,7 +37,11 @@ func (f Func) String() string {
 	return buf.String()
 }
 
-// Deps
+// Deps gives a list of packages the function depends on. E.g. if the function
+// represents Serve(net.Listener, http.Handler) error, calling Deps() will
+// return []string{"http", "net"}.
+//
+// The packages are sorted by name.
 func (f Func) Deps() []string {
 	pkgs := make(map[string]struct{}, 0)
 	for _, in := range f.Ins {
@@ -58,8 +62,8 @@ func (f Func) Deps() []string {
 	return deps
 }
 
-type byName []Func
+type funcs []Func
 
-func (p byName) Len() int           { return len(p) }
-func (p byName) Less(i, j int) bool { return p[i].Name < p[j].Name }
-func (p byName) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
+func (f funcs) Len() int           { return len(f) }
+func (f funcs) Less(i, j int) bool { return f[i].Name < f[j].Name }
+func (f funcs) Swap(i, j int)      { f[i], f[j] = f[j], f[i] }

@@ -9,13 +9,13 @@ import (
 
 var errSyntax = errors.New("query string syntax error")
 
-// Query
+// Query represents a named type request.
 type Query struct {
 	TypeName string `json:"name,omitempty"`
 	Package  string `json:"package,omitempty"`
 }
 
-// ParseQuery
+// ParseQuery gives new Query for the given query text.
 func ParseQuery(query string) (*Query, error) {
 	if query == "" {
 		return nil, errors.New("query string is empty")
@@ -50,11 +50,11 @@ func (q *Query) valid() error {
 	return nil
 }
 
-// Options
+// Options is used for altering behavior of New() function.
 type Options struct {
-	Query      *Query
-	Context    *build.Context
-	Unexported bool
+	Query      *Query         // a named type
+	Context    *build.Context // build context; see go/build godoc for details
+	Unexported bool           // whether to include unexported methods
 }
 
 func (opts *Options) context() *build.Context {

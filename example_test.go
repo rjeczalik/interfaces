@@ -90,3 +90,12 @@ func ExampleNewWithOptions() {
 	// Dependencies:
 	// net
 }
+
+func ExampleFuncString() {
+	f := interfaces.Func{
+		Name: "Close",
+		Outs: []interfaces.Type{{Name: "error"}},
+	}
+	fmt.Println(f)
+	// Output: Close() error
+}

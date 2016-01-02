@@ -6,16 +6,16 @@ import (
 	"golang.org/x/tools/go/types"
 )
 
-// Type
+// Type is a simple representation of a single parameter type.
 type Type struct {
-	Name        string `json:"name,omitempty"`
-	Package     string `json:"package,omitempty"`
-	ImportPath  string `json:"importPath,omitempty"`
-	IsPointer   bool   `json:"isPointer,omitempty"`
-	IsComposite bool   `json:"isComposite,omitempty"`
+	Name        string `json:"name,omitempty"`        // type name
+	Package     string `json:"package,omitempty"`     // package name the type is defined in; empty for builtin
+	ImportPath  string `json:"importPath,omitempty"`  // import path of the package
+	IsPointer   bool   `json:"isPointer,omitempty"`   // whether the paramter is a pointer
+	IsComposite bool   `json:"isComposite,omitempty"` // whether the type is map, slice, chan or array
 }
 
-// String
+// String gives Go code representation of the type.
 func (typ Type) String() (s string) {
 	if typ.IsPointer {
 		s = "*"

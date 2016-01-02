@@ -10,10 +10,15 @@ import (
 	"golang.org/x/tools/go/types"
 )
 
-// Interface
+// Interface represents a typed interface.
 type Interface []Func
 
-// New
+// New builds an interface definition for a type specified by the query.
+// Supported query format is "package".Type (similar to what gorename
+// tool accepts).
+//
+// The function expects sources for the requested type to be present
+// in current GOPATH.
 func New(query string) (Interface, error) {
 	q, err := ParseQuery(query)
 	if err != nil {
@@ -25,7 +30,11 @@ func New(query string) (Interface, error) {
 	return NewWithOptions(opts)
 }
 
-// NewWithOptions
+// NewWithOptions builds an interface definition for a type specified by
+// the given Options.
+//
+// The Options may be used to specify e.g. different GOPATH if sources
+// for requested type are not available in the current one.
 func NewWithOptions(opts *Options) (Interface, error) {
 	if opts == nil || opts.Query == nil {
 		panic("interfacer: called NewWithOptions with nil Options or nil Query")
@@ -36,7 +45,7 @@ func NewWithOptions(opts *Options) (Interface, error) {
 	return buildInterface(opts)
 }
 
-// Deps
+// Deps gives a list of packages the interface depends on.
 func (i Interface) Deps() []string {
 	pkgs := make(map[string]struct{})
 	for _, fn := range i {
@@ -76,6 +85,8 @@ func buildInterface(opts *Options) (Interface, error) {
 	if err == nil {
 		return i, nil
 	}
+	// If a requested type is defined in an external test package try to
+	// build the interface using it before returning an error.
 	queryCopy := *opts.Query
 	queryCopy.Package += "_test"
 	optsCopy := *opts
@@ -136,7 +147,7 @@ func buildInterfaceForPkg(pkg *loader.PackageInfo, opts *Options) (Interface, er
 	if len(inter) == 0 {
 		return nil, notFoundErr(opts)
 	}
-	sort.Sort(byName(inter))
+	sort.Sort(funcs(inter))
 	return inter, nil
 }
 
@@ -144,6 +155,7 @@ func collectMethods(methods map[string]*types.Func, typ *types.Named, depth int,
 	if orig == nil {
 		orig = typ
 	}
+	// TODO(rjeczalik): recursive types support
 	if depth > 128 {
 		panic("recursive types not supported: " + orig.String())
 	}
