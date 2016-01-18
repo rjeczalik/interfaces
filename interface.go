@@ -3,11 +3,11 @@ package interfaces
 import (
 	"errors"
 	"fmt"
+	"go/types"
 	"sort"
 	"unicode"
 
 	"golang.org/x/tools/go/loader"
-	"golang.org/x/tools/go/types"
 )
 
 // Interface represents a typed interface.

@@ -2,8 +2,7 @@ package interfaces
 
 import (
 	"fmt"
-
-	"golang.org/x/tools/go/types"
+	"go/types"
 )
 
 // Type is a simple representation of a single parameter type.
