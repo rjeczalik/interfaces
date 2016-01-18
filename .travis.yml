@@ -1,7 +1,7 @@
 language: go
 
 go:
- - 1.5.2
+ - 1.5.3
  - tip
 
 matrix:
@@ -15,8 +15,8 @@ env:
    - PATH=$HOME/bin:$PATH
 
 install:
- - go get golang.org/x/tools/cmd/vet
- - go get -t -v ./...
+ - go get -u golang.org/x/tools/cmd/vet
+ - go get -t -v -u ./...
 
 script:
  - go tool vet -all .
