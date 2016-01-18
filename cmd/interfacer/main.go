@@ -32,7 +32,7 @@ type {{.InterfaceName}} interface {
 {{end}}}
 `))
 
-type Vars struct {
+type vars struct {
 	PackageName   string
 	InterfaceName string
 	Type          string
@@ -74,7 +74,7 @@ func main() {
 	if err != nil {
 		die(err)
 	}
-	v := &Vars{
+	v := &vars{
 		Type:      *query,
 		Deps:      i.Deps(),
 		Interface: i,

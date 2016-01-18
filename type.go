@@ -11,7 +11,7 @@ type Type struct {
 	Name        string `json:"name,omitempty"`        // type name
 	Package     string `json:"package,omitempty"`     // package name the type is defined in; empty for builtin
 	ImportPath  string `json:"importPath,omitempty"`  // import path of the package
-	IsPointer   bool   `json:"isPointer,omitempty"`   // whether the paramter is a pointer
+	IsPointer   bool   `json:"isPointer,omitempty"`   // whether the parameter is a pointer
 	IsComposite bool   `json:"isComposite,omitempty"` // whether the type is map, slice, chan or array
 }
 
