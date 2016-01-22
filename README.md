@@ -38,7 +38,7 @@ Usage of structer:
 ```
 $ structer -f aws-billing.csv -tag json -as billing.Record
 ```
-```
+```go
 // Created by structer; DO NOT EDIT
 
 package billing
