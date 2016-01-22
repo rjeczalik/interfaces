@@ -9,7 +9,7 @@ Generates a struct for a formatted file. Currently supported formats are:
 
 *Usage*
 
-```
+```bash
 ~ $ structer -help
 ```
 ```
@@ -28,15 +28,15 @@ Usage of structer:
 
 *Example*
 
-```
+```bash
 ~ $ head -2 aws-billing.csv         # first line is a CSV header, second - first line of values
 ```
 ```
 "InvoiceID","PayerAccountId","LinkedAccountId","RecordType","RecordId","ProductName","RateId","SubscriptionId","PricingPlanId","UsageType","Operation","AvailabilityZone","ReservedInstance","ItemDescription","UsageStartDate","UsageEndDate","UsageQuantity","BlendedRate","BlendedCost","UnBlendedRate","UnBlendedCost","ResourceId"
 "Estimated","54321","54321","LineItem","543212345","AWS CloudTrail","12345","12345","12345","USE1-FreeEventsRecorded","None","","N","0.0 per free event recorded in US East (N.Virginia) region","2016-01-01 00:00:00","2016-01-01 01:00:00","4105.00000000","0.0000000000","0.00000000","0.0000000000","0.00000000",""
 ```
-```
-$ structer -f aws-billing.csv -tag json -as billing.Record
+```bash
+~ $ structer -f aws-billing.csv -tag json -as billing.Record
 ```
 ```go
 // Created by structer; DO NOT EDIT
@@ -76,7 +76,7 @@ Generates an interface for a named type.
 
 *Usage*
 
-```
+```bash
 ~ $ interfacer -help
 ```
 ```
@@ -93,7 +93,7 @@ Usage of interfacer:
 
 *Example*
 
-```
+```bash
 ~ $ interfacer -for \"os\".File -as mock.File
 ```
 ```go
