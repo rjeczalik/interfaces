@@ -1,6 +1,11 @@
 # interfaces [![GoDoc](https://godoc.org/github.com/rjeczalik/interfaces?status.png)](https://godoc.org/github.com/rjeczalik/interfaces) [![Build Status](https://img.shields.io/travis/rjeczalik/interfaces/master.svg)](https://travis-ci.org/rjeczalik/interfaces "linux_amd64") [![Build status](https://img.shields.io/appveyor/ci/rjeczalik/interfaces.svg)](https://ci.appveyor.com/project/rjeczalik/interfaces "windows_amd64")
 Code generation tools for Go's interfaces.
 
+Tools available in this repository:
+
+- [cmd/structer](#cmdstructer-)
+- [cmd/interfacer](#cmdinterfacer-)
+
 ### cmd/structer [![GoDoc](https://godoc.org/github.com/rjeczalik/interfaces/cmd/structer?status.png)](https://godoc.org/github.com/rjeczalik/interfaces/cmd/structer)
 
 Generates a struct for a formatted file. Currently supported formats are:
