@@ -46,7 +46,8 @@ func ({{$r}} *{{$v.StructName}}) MarshalCSV() ([]string, error) {
 		{{$r}}.{{$s.Name}},{{else if (eq $s.Type.Name "bool")}}
 		strconv.FormatBool({{$r}}.{{$s.Name}}),{{else if (eq $s.Type.Name "int64")}}
 		strconv.FormatInt({{$r}}.{{$s.Name}}, 10),{{else if (eq $s.Type.Name "float64")}}
-		strconv.FormatFloat({{$r}}.{{$s.Name}}, 'f', -1, 64),{{else}}
+		strconv.FormatFloat({{$r}}.{{$s.Name}}, 'f', -1, 64),{{else if (eq $s.Type.Name "time.Time")}}
+		time.Parse("{{$v.TimeFormat}}", {{$r}}.{{$s.Name}}),{{else}}
 		fmt.Sprintf("%v", {{$r}}.{{$s.Name}}),{{end}}{{end}}
 	}
 	return records, nil
@@ -74,6 +75,13 @@ func ({{$r}} *{{$v.StructName}}) UnmarshalCSV(record []string) error {
 	}
 {{else if (eq $s.Type.Name "float64")}}	if record[{{$i}}] != "" {
 		if val, err := strconv.ParseFloat(record[{{$i}}], 64); err == nil {
+			{{$r}}.{{$s.Name}} = val
+		} else {
+			return err
+		}
+	}
+{{else if (eq $s.Type.Name "time.Time")}}	if record[{{$i}}] != "" {
+		if val, err := time.Parse("{{$v.TimeFormat}}", record[{{$i}}]); err == nil {
 			{{$r}}.{{$s.Name}} = val
 		} else {
 			return err

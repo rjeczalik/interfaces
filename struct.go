@@ -3,8 +3,10 @@ package interfaces
 import (
 	"bytes"
 	"errors"
+	"sort"
 	"strconv"
 	"strings"
+	"time"
 	"unicode"
 )
 
@@ -52,6 +54,24 @@ func (f *Field) String() string {
 
 // Struct
 type Struct []Field
+
+// Deps
+func (s Struct) Deps() []string {
+	pkgs := make(map[string]struct{}, 0)
+	for i := range s {
+		pkgs[s[i].Type.ImportPath] = struct{}{}
+	}
+	delete(pkgs, "")
+	if len(pkgs) == 0 {
+		return nil
+	}
+	deps := make([]string, 0, len(pkgs))
+	for pkg := range pkgs {
+		deps = append(deps, pkg)
+	}
+	sort.Strings(deps)
+	return deps
+}
 
 // String
 func (s Struct) String() string {
@@ -114,6 +134,9 @@ func NewStruct(opts *Options) (Struct, error) {
 			f.Type.Name = "int64"
 		} else if _, err := strconv.ParseFloat(v, 64); err == nil {
 			f.Type.Name = "float64"
+		} else if _, err := time.Parse(opts.TimeFormat, v); err == nil {
+			f.Type.Name = "time.Time"
+			f.Type.ImportPath = "time"
 		} else {
 			f.Type.Name = "string"
 		}

@@ -56,8 +56,9 @@ type Options struct {
 	Context    *build.Context // build context; see go/build godoc for details
 	Unexported bool           // whether to include unexported methods
 
-	CSVHeader []string
-	CSVRecord []string
+	CSVHeader  []string
+	CSVRecord  []string
+	TimeFormat string
 }
 
 func (opts *Options) context() *build.Context {

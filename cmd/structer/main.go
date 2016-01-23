@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"text/template"
 	"unicode"
@@ -15,6 +16,7 @@ import (
 )
 
 var (
+	time   = flag.String("time", "2006/01/02 15:04:05", "Time format for use with date fields.")
 	tag    = flag.String("tag", "", "Name for a struct tag to add to each field.")
 	typ    = flag.String("format", "", "Type of the input, overwrites inferred from file name.")
 	as     = flag.String("as", "main.Struct", "Generated struct name.")
@@ -73,6 +75,7 @@ type {{.StructName}} struct {
 
 type vars struct {
 	Deps        []string
+	TimeFormat  string
 	PackageName string
 	StructName  string
 	FileName    string
@@ -135,10 +138,21 @@ func run() (err error) {
 		return err
 	}
 
+	opts.TimeFormat = *time
+	v.TimeFormat = *time
+
 	v.Struct, err = interfaces.NewStruct(opts)
 	if err != nil {
 		return err
 	}
+
+	v.Deps, err = deps(*typ)
+	if err != nil {
+		return err
+	}
+
+	v.Deps = append(v.Deps, v.Struct.Deps()...)
+	sort.Strings(v.Deps)
 
 	if i := strings.IndexRune(*as, '.'); i != -1 {
 		v.PackageName = (*as)[:i]
@@ -155,11 +169,6 @@ func run() (err error) {
 			}
 			v.Struct[i].Tags = append(v.Struct[i].Tags, t)
 		}
-	}
-
-	v.Deps, err = deps(*typ)
-	if err != nil {
-		return err
 	}
 
 	return nonil(tmpl.Execute(w, &v), appendTemplate(*typ, &v, w), w.Sync(), w.Close())
