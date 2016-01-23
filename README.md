@@ -105,60 +105,81 @@ Usage of structer:
 
 package billing
 
-import "strconv"
+import (
+        "strconv"
+        "time"
+)
 
 // Record is a struct generated from "aws-billing.csv" file.
 type Record struct {
-        InvoiceID              string `json:"invoiceID"`
-        PayerAccountID         int64  `json:"payerAccountID"`
-        LinkedAccountID        string `json:"linkedAccountID"`
-        RecordType             string `json:"recordType"`
-        RecordID               int64  `json:"recordID"`
-        BillingPeriodStartDate string `json:"billingPeriodStartDate"`
-        BillingPeriodEndDate   string `json:"billingPeriodEndDate"`
-        InvoiceDate            string `json:"invoiceDate"`
+        InvoiceID              string    `json:"invoiceID"`
+        PayerAccountID         int64     `json:"payerAccountID"`
+        LinkedAccountID        string    `json:"linkedAccountID"`
+        RecordType             string    `json:"recordType"`
+        RecordID               int64     `json:"recordID"`
+        BillingPeriodStartDate time.Time `json:"billingPeriodStartDate"`
+        BillingPeriodEndDate   time.Time `json:"billingPeriodEndDate"`
+        InvoiceDate            time.Time `json:"invoiceDate"`
 }
 
-// MarshalCSV encodes s as a single CSV record.
-func (s *Struct) MarshalCSV() ([]string, error) {
-        records := []string{ 
-                s.InvoiceID,
-                strconv.FormatInt(s.PayerAccountID, 10),
-                s.LinkedAccountID,
-                s.RecordType,
-                strconv.FormatInt(s.RecordID, 10),
-                s.BillingPeriodStartDate,
-                s.BillingPeriodEndDate,
-                s.InvoiceDate,
+// MarshalCSV encodes r as a single CSV record.
+func (r *Record) MarshalCSV() ([]string, error) {
+        records := []string{
+                r.InvoiceID,
+                strconv.FormatInt(r.PayerAccountID, 10),
+                r.LinkedAccountID,
+                r.RecordType,
+                strconv.FormatInt(r.RecordID, 10),
+                time.Parse("2006/01/02 15:04:05", r.BillingPeriodStartDate),
+                time.Parse("2006/01/02 15:04:05", r.BillingPeriodEndDate),
+                time.Parse("2006/01/02 15:04:05", r.InvoiceDate),
         }
         return records, nil
 }
 
-// UnmarshalCSV decodes a single CSV record into s.
-func (s *Struct) UnmarshalCSV(record []string) error {
+// UnmarshalCSV decodes a single CSV record into r.
+func (r *Record) UnmarshalCSV(record []string) error {
         if len(record) != 8 {
                 return fmt.Errorf("invalud number fields: want 8, got %d", len(record))
         }
-        s.InvoiceID = record[0]
+        r.InvoiceID = record[0]
         if record[1] != "" {
                 if val, err := strconv.ParseInt(record[1], 10, 64); err == nil {
-                        s.PayerAccountID = val
+                        r.PayerAccountID = val
                 } else {
                         return err
                 }
         }
-        s.LinkedAccountID = record[2]
-        s.RecordType = record[3]
+        r.LinkedAccountID = record[2]
+        r.RecordType = record[3]
         if record[4] != "" {
                 if val, err := strconv.ParseInt(record[4], 10, 64); err == nil {
-                        s.RecordID = val
+                        r.RecordID = val
                 } else {
                         return err
                 }
         }
-        s.BillingPeriodStartDate = record[5]
-        s.BillingPeriodEndDate = record[6]
-        s.InvoiceDate = record[7]
+        if record[5] != "" {
+                if val, err := time.Parse("2006/01/02 15:04:05", record[5]); err == nil {
+                        r.BillingPeriodStartDate = val
+                } else {
+                        return err
+                }
+        }
+        if record[6] != "" {
+                if val, err := time.Parse("2006/01/02 15:04:05", record[6]); err == nil {
+                        r.BillingPeriodEndDate = val
+                } else {
+                        return err
+                }
+        }
+        if record[7] != "" {
+                if val, err := time.Parse("2006/01/02 15:04:05", record[7]); err == nil {
+                        r.InvoiceDate = val
+                } else {
+                        return err
+                }
+        }
         return nil
 }
 ```
