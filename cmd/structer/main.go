@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/csv"
 	"errors"
 	"flag"
 	"fmt"
@@ -17,22 +16,63 @@ import (
 
 var (
 	tag    = flag.String("tag", "", "Name for a struct tag to add to each field.")
-	typ    = flag.String("type", "", "Type of the input, overwrites inferred from file name.")
+	typ    = flag.String("format", "", "Type of the input, overwrites inferred from file name.")
 	as     = flag.String("as", "main.Struct", "Generated struct name.")
 	input  = flag.String("f", "-", "Input file.")
 	output = flag.String("o", "-", "Output file.")
 )
 
-var tmpl = template.Must(template.New("").Parse(`// Created by structer; DO NOT EDIT
+// formatter is a helper interface used to build struct definition and
+// custom marshallers for a particular format type.
+type formatter interface {
+	deps() []string
+	parse(io.Reader) (*interfaces.Options, error)
+	appendTemplate(*vars, io.Writer) error
+}
+
+// formats map holds all registered formatters
+var formats = make(map[string]formatter)
+
+// deps gives list of import paths that the format depends on.
+func deps(typ string) ([]string, error) {
+	f, ok := formats[typ]
+	if !ok {
+		return nil, errors.New("unsupported format type: " + typ)
+	}
+	return f.deps(), nil
+}
+
+// parse reads user-provided file and returns options, which are used
+// to create struct definition.
+func parse(typ string, r io.Reader) (*interfaces.Options, error) {
+	f, ok := formats[typ]
+	if !ok {
+		return nil, errors.New("unsupported format type: " + typ)
+	}
+	return f.parse(r)
+}
+
+// appendTemplate writes to w custom marshaller/unmarshaller methods for
+// struct definition given by the v.
+func appendTemplate(typ string, v *vars, w io.Writer) error {
+	f, ok := formats[typ]
+	if !ok {
+		return errors.New("unsupported format type: " + typ)
+	}
+	return f.appendTemplate(v, w)
+}
+
+var tmpl = mustTemplate(`// Created by structer; DO NOT EDIT
 
 package {{.PackageName}}
-
+{{if (eq (.Deps | len) 1)}}{{println}}import "{{(index .Deps 0)}}"{{println}}{{else if (gt (.Deps | len) 1)}}{{println}}import ({{println}}{{range .Deps}}	"{{.}}"{{println}}{{end}}){{println}}{{end}}
 // {{.StructName}} is a struct generated from "{{.FileName}}" file.
 type {{.StructName}} struct {
 {{.Struct}}}
-`))
+`)
 
 type vars struct {
+	Deps        []string
 	PackageName string
 	StructName  string
 	FileName    string
@@ -86,12 +126,11 @@ func run() (err error) {
 		}
 	}
 
-	var opts *interfaces.Options
-	if *typ != "" {
-		opts, err = parse(*typ, r)
-	} else {
-		opts, err = parse(inferredType, r)
+	if *typ == "" {
+		*typ = inferredType
 	}
+
+	opts, err := parse(*typ, r)
 	if err != nil {
 		return err
 	}
@@ -118,33 +157,23 @@ func run() (err error) {
 		}
 	}
 
-	return nonil(tmpl.Execute(w, v), w.Sync(), w.Close())
+	v.Deps, err = deps(*typ)
+	if err != nil {
+		return err
+	}
+
+	return nonil(tmpl.Execute(w, &v), appendTemplate(*typ, &v, w), w.Sync(), w.Close())
 }
 
-func parse(typ string, r io.Reader) (*interfaces.Options, error) {
-	switch typ {
-	case "", "txt", "csv":
-		dec := csv.NewReader(r)
+var tmplFuncs = template.FuncMap{
+	"receiver": func(typ string) string {
+		return string(unicode.ToLower(rune(typ[0])))
+	},
+	"camelcase": camelcase,
+}
 
-		header, err := dec.Read()
-		if err != nil {
-			return nil, err
-		}
-
-		record, err := dec.Read()
-		if err != nil {
-			return nil, err
-		}
-
-		opts := &interfaces.Options{
-			CSVHeader: header,
-			CSVRecord: record,
-		}
-
-		return opts, nil
-	default:
-		return nil, errors.New("unsupported input type: " + typ)
-	}
+func mustTemplate(content string) *template.Template {
+	return template.Must(template.New("").Funcs(tmplFuncs).Parse(content))
 }
 
 func camelcase(s string) string {
