@@ -7,8 +7,13 @@ clone_folder: c:\projects\src\github.com\rjeczalik\interfaces
 environment:
  PATH: c:\projects\bin;%PATH%
  GOPATH: c:\projects
+ GOVERSION: 1.8.3
 
 install:
+ - rmdir c:\go /s /q
+ - appveyor DownloadFile https://storage.googleapis.com/golang/go%GOVERSION%.windows-amd64.zip
+ - 7z x go%GOVERSION%.windows-amd64.zip -y -oC:\ > NUL
+
  - cd %APPVEYOR_BUILD_FOLDER%
  - go version
  - go get golang.org/x/tools/cmd/vet
@@ -22,4 +27,3 @@ build_script:
 test: off
 
 deploy: off
-
