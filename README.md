@@ -124,15 +124,16 @@ type Record struct {
 
 // MarshalCSV encodes r as a single CSV record.
 func (r *Record) MarshalCSV() ([]string, error) {
+        timeFormat := "2006/01/02 15:04:05"
         records := []string{
                 r.InvoiceID,
                 strconv.FormatInt(r.PayerAccountID, 10),
                 r.LinkedAccountID,
                 r.RecordType,
                 strconv.FormatInt(r.RecordID, 10),
-                time.Parse("2006/01/02 15:04:05", r.BillingPeriodStartDate),
-                time.Parse("2006/01/02 15:04:05", r.BillingPeriodEndDate),
-                time.Parse("2006/01/02 15:04:05", r.InvoiceDate),
+                r.BillingPeriodStartDate.Format(timeFormat)),
+                r.BillingPeriodEndDate.Format(timeFormat)),
+                r.InvoiceDate.Format(timeFormat)),
         }
         return records, nil
 }
