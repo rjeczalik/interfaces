@@ -1,8 +1,7 @@
 language: go
 
 go:
- - 1.5.3
- - tip
+ - 1.8.3
 
 matrix:
   fast_finish: true
@@ -15,10 +14,9 @@ env:
    - PATH=$HOME/bin:$PATH
 
 install:
- - go get -u golang.org/x/tools/cmd/vet
  - go get -t -v -u ./...
 
 script:
  - go tool vet -all .
- - go build ./...
+ - go install ./...
  - go test -race -v ./...

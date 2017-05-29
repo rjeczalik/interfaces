@@ -15,7 +15,7 @@ func init() {
 type csvFmt struct{}
 
 func (csvFmt) deps() []string {
-	return []string{"strconv"}
+	return []string{"strconv", "fmt"}
 }
 
 func (csvFmt) parse(r io.Reader) (*interfaces.Options, error) {
@@ -47,7 +47,7 @@ func ({{$r}} *{{$v.StructName}}) MarshalCSV() ([]string, error) {
 		strconv.FormatBool({{$r}}.{{$s.Name}}),{{else if (eq $s.Type.Name "int64")}}
 		strconv.FormatInt({{$r}}.{{$s.Name}}, 10),{{else if (eq $s.Type.Name "float64")}}
 		strconv.FormatFloat({{$r}}.{{$s.Name}}, 'f', -1, 64),{{else if (eq $s.Type.Name "time.Time")}}
-		time.Parse("{{$v.TimeFormat}}", {{$r}}.{{$s.Name}}),{{else}}
+		{{$r}}.{{$s.Name}}.Format("{{$v.TimeFormat}}"),{{else}}
 		fmt.Sprintf("%v", {{$r}}.{{$s.Name}}),{{end}}{{end}}
 	}
 	return records, nil

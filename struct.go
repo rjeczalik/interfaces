@@ -43,7 +43,7 @@ func (t Tags) String() string {
 // Field
 type Field struct {
 	Name string `json:"name,omitempty"`
-	Type Type   `json:"name,omitempty"`
+	Type Type   `json:"type,omitempty"`
 	Tags Tags   `json:"tags,omitempty"`
 }
 
