@@ -15,7 +15,7 @@ func init() {
 type csvFmt struct{}
 
 func (csvFmt) deps() []string {
-	return []string{"strconv"}
+	return []string{"strconv", "fmt"}
 }
 
 func (csvFmt) parse(r io.Reader) (*interfaces.Options, error) {
