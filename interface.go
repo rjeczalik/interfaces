@@ -168,7 +168,11 @@ func collectMethods(methods map[string]*types.Func, typ *types.Named, depth int,
 	}
 	if typ, ok := typ.Underlying().(*types.Struct); ok {
 		for i := 0; i < typ.NumFields(); i++ {
-			typ := typ.Field(i).Type()
+			field := typ.Field(i)
+			if !field.Anonymous() {
+				continue
+			}
+			typ := field.Type()
 			if p, ok := typ.(*types.Pointer); ok {
 				typ = p.Elem()
 			}
