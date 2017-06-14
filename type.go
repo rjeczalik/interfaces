@@ -3,6 +3,8 @@ package interfaces
 import (
 	"fmt"
 	"go/types"
+	"path"
+	"strings"
 )
 
 // Type is a simple representation of a single parameter type.
@@ -12,6 +14,7 @@ type Type struct {
 	ImportPath  string `json:"importPath,omitempty"`  // import path of the package
 	IsPointer   bool   `json:"isPointer,omitempty"`   // whether the parameter is a pointer
 	IsComposite bool   `json:"isComposite,omitempty"` // whether the type is map, slice, chan or array
+	IsFunc      bool   `json:"isFunc,omitempty"`      // whether the type if function
 }
 
 // String gives Go code representation of the type.
@@ -51,6 +54,9 @@ func (typ *Type) setFromType(t types.Type, depth int, orig types.Type) {
 		typ.setFromStruct(t)
 	case *types.Named:
 		typ.setFromNamed(t)
+	case *types.Signature:
+		typ.IsFunc = true
+		typ.setFromSignature(t)
 	case *types.Pointer:
 		if depth == 0 {
 			typ.IsPointer = true
@@ -84,6 +90,12 @@ func (typ *Type) setFromStruct(t *types.Struct) {
 	}
 }
 
+func (typ *Type) setFromSignature(t *types.Signature) {
+	if typ.Name == "" {
+		typ.Name = t.String()
+	}
+}
+
 func (typ *Type) setFromNamed(t *types.Named) {
 	if typ.Name == "" {
 		typ.Name = t.Obj().Name()
@@ -103,4 +115,17 @@ func (typ *Type) setFromComposite(t compositeType, depth int, orig types.Type) {
 		typ.Name = t.String()
 	}
 	typ.setFromType(t.Elem(), depth+1, orig)
+}
+
+func fixup(typ *Type, q *Query) {
+	// Hacky fixup for renaming:
+	//
+	//   GeoAdd(string, []*github.com/go-redis/redis.GeoLocation) *redis.IntCmd
+	//
+	// to:
+	//
+	//   GeoAdd(string, []*redis.GeoLocation) *redis.IntCmd
+	//
+	// Should be fixed layer below, in type.go.
+	typ.Name = strings.Replace(typ.Name, q.Package, path.Base(q.Package), -1)
 }
