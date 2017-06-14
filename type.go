@@ -51,6 +51,8 @@ func (typ *Type) setFromType(t types.Type, depth int, orig types.Type) {
 		typ.setFromStruct(t)
 	case *types.Named:
 		typ.setFromNamed(t)
+	case *types.Signature:
+		typ.setFromSignature(t)
 	case *types.Pointer:
 		if depth == 0 {
 			typ.IsPointer = true
@@ -79,6 +81,12 @@ func (typ *Type) setFromInterface(t *types.Interface) {
 }
 
 func (typ *Type) setFromStruct(t *types.Struct) {
+	if typ.Name == "" {
+		typ.Name = t.String()
+	}
+}
+
+func (typ *Type) setFromSignature(t *types.Signature) {
 	if typ.Name == "" {
 		typ.Name = t.String()
 	}
