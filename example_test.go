@@ -86,7 +86,6 @@ func ExampleNewWithOptions() {
 	// Output: Interface:
 	// Addrs() ([]net.Addr, error)
 	// MulticastAddrs() ([]net.Addr, error)
-	// String() string
 	// Dependencies:
 	// net
 }
