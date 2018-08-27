@@ -10,6 +10,11 @@ Tools available in this repository:
 
 Generates an interface for a named type.
 
+*Installation*
+```bash
+~ $ go get github.com/rjeczalik/interfaces/cmd/interfacer
+```
+
 *Usage*
 
 ```bash
@@ -68,6 +73,11 @@ type File interface {
 Generates a struct for a formatted file. Currently supported formats are:
 
 - CSV
+
+*Installation*
+```bash
+~ $ go get github.com/rjeczalik/interfaces/cmd/structer
+```
 
 *Usage*
 
