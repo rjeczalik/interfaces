@@ -8,11 +8,11 @@ import (
 
 func TestParseQuery(t *testing.T) {
 	cases := map[string]*interfaces.Query{
-		`"os".File`: {
+		`os.File`: {
 			Package:  "os",
 			TypeName: "File",
 		},
-		`"github.com/rjeczalik/interfaces".Query`: {
+		`github.com/rjeczalik/interfaces.Query`: {
 			Package:  "github.com/rjeczalik/interfaces",
 			TypeName: "Query",
 		},

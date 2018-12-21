@@ -17,26 +17,16 @@ type Query struct {
 
 // ParseQuery gives new Query for the given query text.
 func ParseQuery(query string) (*Query, error) {
-	if query == "" {
-		return nil, errors.New("query string is empty")
+	idx := strings.LastIndex(query, ".")
+	if idx == -1 || query[:idx] == "" || query[idx+1:] == "" {
+		return nil, errors.New("generating source should be path/to/package.type")
 	}
-	var q Query
-	if query[0] != '"' {
-		return nil, errSyntax
-	}
-	query = query[1:]
-	i := strings.LastIndex(query, `"`)
-	if i == -1 || i+1 == len(query) || query[i+1] != '.' {
-		return nil, errSyntax
-	}
-	q.Package = query[:i]
-	q.TypeName = query[i+2:]
-	if err := q.valid(); err != nil {
-		return nil, err
-	}
-	return &q, nil
-}
 
+	return &Query{
+		Package:  query[:idx],
+		TypeName: query[idx+1:],
+	}, nil
+}
 func (q *Query) valid() error {
 	if q == nil {
 		return errors.New("query is nil")

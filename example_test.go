@@ -36,7 +36,7 @@ func (ExampleBaz) D(*map[interface{}]struct{}, interface{}) (chan struct{}, []in
 func (*ExampleBaz) E(*[]map[*flag.FlagSet]struct{}, [3]string) {}
 
 func ExampleNew() {
-	i, err := interfaces.New(`"github.com/rjeczalik/interfaces".ExampleBaz`)
+	i, err := interfaces.New(`github.com/rjeczalik/interfaces.ExampleBaz`)
 	if err != nil {
 		fmt.Println(err)
 		return

@@ -29,7 +29,7 @@ func TestBuild(t *testing.T) {
 		"interfacer": {
 			run: func(base string) error {
 				args := []string{
-					"-for", `"os".File`,
+					"-for", `os.File`,
 					"-as", "mock.File",
 					"-o", filepath.Join(base, "package.go"),
 				}
