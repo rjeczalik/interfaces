@@ -33,10 +33,18 @@ Usage of interfacer:
 ```
 
 *Example*
-
+- generate by manually
 ```bash
-~ $ interfacer -for \"os\".File -as mock.File
+~ $ interfacer -for os.File -as mock.File
 ```
+- generate by go generate
+```go
+//go:generate interfacer -for os.File -as mock.File -o file_iface.go
+```
+```bash
+~ $ go generate  ./...
+```
+- output
 ```go
 // Created by interfacer; DO NOT EDIT
 

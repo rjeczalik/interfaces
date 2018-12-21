@@ -75,7 +75,7 @@ func main() {
 		die(err)
 	}
 	v := &vars{
-		Type:      *query,
+		Type:      fmt.Sprintf(`"%s"`, *query),
 		Deps:      i.Deps(),
 		Interface: i,
 	}
