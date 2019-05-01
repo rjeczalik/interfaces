@@ -132,9 +132,10 @@ func buildInterfaceForPkg(pkg *loader.PackageInfo, opts *Options) (Interface, er
 		ins := sig.Params()
 		outs := sig.Results()
 		fn := Func{
-			Name: method.Name(),
-			Ins:  make([]Type, ins.Len()),
-			Outs: make([]Type, outs.Len()),
+			Name:       method.Name(),
+			Ins:        make([]Type, ins.Len()),
+			Outs:       make([]Type, outs.Len()),
+			IsVariadic: sig.Variadic(),
 		}
 		for i := range fn.Ins {
 			fn.Ins[i] = newType(ins.At(i))

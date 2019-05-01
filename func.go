@@ -4,14 +4,18 @@ import (
 	"bytes"
 	"fmt"
 	"sort"
+	"strings"
 )
 
 // Func represents an interface function.
 type Func struct {
-	Name string `json:"name,omitempty"` // name of the function
-	Ins  []Type `json:"ins,omitempty"`  // input parameters
-	Outs []Type `json:"outs,omitempty"` // output parameters
+	Name       string `json:"name,omitempty"` // name of the function
+	Ins        []Type `json:"ins,omitempty"`  // input parameters
+	Outs       []Type `json:"outs,omitempty"` // output parameters
+	IsVariadic bool   // whether the function is variadic
 }
+
+var variadic = strings.NewReplacer("[]", "...")
 
 // String gives Go code representation of the function.
 func (f Func) String() string {
@@ -19,9 +23,9 @@ func (f Func) String() string {
 	if len(f.Ins) == 0 {
 		fmt.Fprintf(&buf, "%s()", f.Name)
 	} else {
-		fmt.Fprintf(&buf, "%s(%s", f.Name, f.Ins[0])
-		for _, typ := range f.Ins[1:] {
-			fmt.Fprintf(&buf, ", %s", typ)
+		fmt.Fprintf(&buf, "%s(%s", f.Name, f.in(0))
+		for i := range f.Ins[1:] {
+			fmt.Fprintf(&buf, ", %s", f.in(i+1))
 		}
 		buf.WriteString(")")
 	}
@@ -35,6 +39,14 @@ func (f Func) String() string {
 		buf.WriteString(")")
 	}
 	return buf.String()
+}
+
+func (f Func) in(i int) string {
+	if typ := f.Ins[i]; i == len(f.Ins)-1 && f.IsVariadic {
+		return variadic.Replace(typ.String())
+	} else {
+		return typ.String()
+	}
 }
 
 // Deps gives a list of packages the function depends on. E.g. if the function
