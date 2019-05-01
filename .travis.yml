@@ -1,10 +1,7 @@
 language: go
 
 go:
- - 1.8.x
- - 1.9.x
- - 1.10.x
- - 1.11.x
+ - 1.12.x
 
 matrix:
   fast_finish: true
@@ -13,13 +10,14 @@ sudo: false
 
 env:
   global:
-   - GOBIN=$HOME/bin
-   - PATH=$HOME/bin:$PATH
+  - GOBIN=$HOME/bin
+  - PATH=$HOME/bin:$PATH
+  - GOCACHE=$HOME/.cache/go-build
+  - GO111MODULE=on
 
 install:
- - go get -t -v -u ./...
+- go get -t -v -u ./...
 
 script:
- - go tool vet -all .
- - go install ./...
- - go test -race -v ./...
+- go install ./...
+- go test -race -v ./...
