@@ -1,0 +1,30 @@
+archives:
+- replacements:
+    amd64: x86_64
+    darwin: Darwin
+    linux: Linux
+    windows: Windows
+before:
+  hooks:
+  - go mod download
+builds:
+- id: interfacer
+  env:
+  - CGO_ENABLED=0
+  main: ./cmd/interfacer/main.go
+  binary: interfacer
+- id: structer
+  env:
+  - CGO_ENABLED=0
+  main: ./cmd/structer/main.go
+  binary: structer
+changelog:
+  filters:
+    exclude:
+    - '^docs:'
+    - '^test:'
+  sort: asc
+checksum:
+  name_template: checksums.txt
+snapshot:
+  name_template: '{{ .Tag }}-next'
