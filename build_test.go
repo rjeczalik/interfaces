@@ -3,6 +3,7 @@ package interfaces_test
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -30,7 +31,7 @@ func TestBuild(t *testing.T) {
 			run: func(base string) error {
 				args := []string{
 					"-for", `os.File`,
-					"-as", "mock.File",
+					"-as", "interfacer.File",
 					"-o", filepath.Join(base, "package.go"),
 				}
 
@@ -51,7 +52,7 @@ func TestBuild(t *testing.T) {
 
 				args := []string{
 					"-tag", "json",
-					"-as", "billing.Record",
+					"-as", "structer.Record",
 					"-format", "csv",
 					"-o", filepath.Join(base, "package.go"),
 				}
@@ -72,9 +73,24 @@ func TestBuild(t *testing.T) {
 		},
 	}
 
-	for name, cas := range cases {
-		t.Run(name, func(t *testing.T) {
-			genpkg := filepath.Join(src, name)
+	gocommand := func(out io.Writer, pkg string, args ...string) *exec.Cmd {
+		c := exec.Command("go", args...)
+		c.Stderr = out
+		c.Stdout = out
+		c.Dir = filepath.Join(gopath, "src", pkg)
+		c.Env = []string{
+			"PATH=" + os.Getenv("PATH"),
+			"GOROOT=" + os.Getenv("GOROOT"),
+			"GOPATH=" + gopath,
+			"GOCACHE=" + os.Getenv("GOCACHE"),
+			"GO111MODULE=on",
+		}
+		return c
+	}
+
+	for pkg, cas := range cases {
+		t.Run(pkg, func(t *testing.T) {
+			genpkg := filepath.Join(src, pkg)
 
 			if err := os.MkdirAll(genpkg, 0755); err != nil {
 				t.Fatalf("MkdirAll()=%s", err)
@@ -86,15 +102,13 @@ func TestBuild(t *testing.T) {
 
 			var buf bytes.Buffer
 
-			gobuild := exec.Command("go", "build", name)
-			gobuild.Stderr = &buf
-			gobuild.Stdout = &buf
-			gobuild.Env = []string{
-				"GOROOT=" + os.Getenv("GOROOT"),
-				"GOPATH=" + gopath,
+			if err := gocommand(&buf, pkg, "mod", "init").Run(); err != nil {
+				t.Fatalf("gomod.Run()=%s:\n%s", err, &buf)
 			}
 
-			if err := gobuild.Run(); err != nil {
+			buf.Reset()
+
+			if err := gocommand(&buf, pkg, "build", ".").Run(); err != nil {
 				t.Fatalf("gobuild.Run()=%s:\n%s", err, &buf)
 			}
 		})
