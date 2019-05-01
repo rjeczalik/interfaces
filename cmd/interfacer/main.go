@@ -92,7 +92,7 @@ func main() {
 			die(err)
 		}
 	}
-	err = nonil(tmpl.Execute(f, v), f.Sync(), f.Close())
+	err = nonil(tmpl.Execute(f, v), f.Close())
 	if err != nil {
 		die(err)
 	}

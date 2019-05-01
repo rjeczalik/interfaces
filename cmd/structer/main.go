@@ -171,7 +171,7 @@ func run() (err error) {
 		}
 	}
 
-	return nonil(tmpl.Execute(w, &v), appendTemplate(*typ, &v, w), w.Sync(), w.Close())
+	return nonil(tmpl.Execute(w, &v), appendTemplate(*typ, &v, w), w.Close())
 }
 
 var tmplFuncs = template.FuncMap{
