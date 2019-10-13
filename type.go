@@ -127,5 +127,14 @@ func fixup(typ *Type, q *Query) {
 	//   GeoAdd(string, []*redis.GeoLocation) *redis.IntCmd
 	//
 	// Should be fixed layer below, in type.go.
+
+	// when include other package struct
+	if typ.ImportPath != "" && typ.ImportPath != q.Package && typ.IsComposite {
+		pkgIdx := strings.LastIndex(typ.ImportPath, typ.Package)
+		if 0 < pkgIdx {
+			typ.Name = strings.Replace(typ.Name, typ.ImportPath[:pkgIdx], "", -1)
+		}
+	}
+
 	typ.Name = strings.Replace(typ.Name, q.Package, path.Base(q.Package), -1)
 }
