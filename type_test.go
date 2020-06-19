@@ -203,6 +203,21 @@ func Test_fixup(t *testing.T) {
 			},
 			fixed: "WithMap2(*[]map[string]*hoge.Hoge)",
 		},
+		"func (s *Sample) ListBuckets() ([]minio.BucketInfo)": {
+			typ: &Type{
+				Name:        "[]github.com/minio/minio-go/v6.BucketInfo",
+				Package:     "minio",
+				ImportPath:  "github.com/minio/minio-go/v6",
+				IsPointer:   false,
+				IsComposite: true,
+				IsFunc:      false,
+			},
+			q: &Query{
+				TypeName: "Client",
+				Package:  "github.com/minio/minio-go/v6",
+			},
+			fixed: "[]minio.BucketInfo",
+		},
 	}
 
 	for k, c := range cases {
