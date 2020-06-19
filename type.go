@@ -129,10 +129,16 @@ func fixup(typ *Type, q *Query) {
 	// Should be fixed layer below, in type.go.
 
 	// when include other package struct
-	if typ.ImportPath != "" && typ.ImportPath != q.Package && typ.IsComposite {
-		pkgIdx := strings.LastIndex(typ.ImportPath, typ.Package)
-		if 0 < pkgIdx {
-			typ.Name = strings.Replace(typ.Name, typ.ImportPath[:pkgIdx], "", -1)
+	if typ.ImportPath != "" && typ.IsComposite {
+		if typ.ImportPath == q.Package {
+			typ.Name = strings.Replace(typ.Name, typ.ImportPath, typ.Package, -1)
+		}
+
+		if typ.ImportPath != q.Package {
+			pkgIdx := strings.LastIndex(typ.ImportPath, typ.Package)
+			if 0 < pkgIdx {
+				typ.Name = strings.Replace(typ.Name, typ.ImportPath[:pkgIdx], "", -1)
+			}
 		}
 	}
 
