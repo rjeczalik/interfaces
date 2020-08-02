@@ -123,7 +123,7 @@ func run() (err error) {
 
 	w := os.Stdout
 	if *output != "-" {
-		w, err = os.OpenFile(*output, os.O_TRUNC|os.O_CREATE|os.O_WRONLY, 0755)
+		w, err = os.OpenFile(*output, os.O_TRUNC|os.O_CREATE|os.O_WRONLY, 0644)
 		if err != nil {
 			return err
 		}
