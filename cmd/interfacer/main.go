@@ -87,7 +87,7 @@ func main() {
 	}
 	f := os.Stdout
 	if *output != "-" {
-		f, err = os.OpenFile(*output, os.O_TRUNC|os.O_CREATE|os.O_WRONLY, 0755)
+		f, err = os.OpenFile(*output, os.O_TRUNC|os.O_CREATE|os.O_WRONLY, 0644)
 		if err != nil {
 			die(err)
 		}
