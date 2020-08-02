@@ -127,6 +127,11 @@ func run() (err error) {
 		if err != nil {
 			return err
 		}
+		defer func() {
+			if err == nil {
+				err = interfaces.FormatFile(*output)
+			}
+		}()
 	}
 
 	if *typ == "" {

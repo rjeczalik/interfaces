@@ -91,6 +91,11 @@ func main() {
 		if err != nil {
 			die(err)
 		}
+		defer func() {
+			if err := interfaces.FormatFile(*output); err != nil {
+				die(err)
+			}
+		}()
 	}
 	err = nonil(tmpl.Execute(f, v), f.Close())
 	if err != nil {
