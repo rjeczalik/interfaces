@@ -42,31 +42,24 @@ type vars struct {
 	Interface     interfaces.Interface
 }
 
-func nonil(err ...error) error {
-	for _, e := range err {
-		if e != nil {
-			return e
-		}
-	}
-	return nil
-}
-
-func die(v interface{}) {
-	fmt.Fprintln(os.Stderr, v)
-	os.Exit(1)
-}
-
 func main() {
+	if err := run(); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+}
+
+func run() error {
 	flag.Parse()
 	if *query == "" {
-		die("empty -for flag value; see -help for details")
+		return errors.New("empty -for flag value; see -help for details")
 	}
 	if *output == "" {
-		die("empty -o flag value; see -help for details")
+		return errors.New("empty -o flag value; see -help for details")
 	}
 	q, err := interfaces.ParseQuery(*query)
 	if err != nil {
-		die(err)
+		return err
 	}
 	opts := &interfaces.Options{
 		Query:      q,
@@ -74,7 +67,7 @@ func main() {
 	}
 	i, err := interfaces.NewWithOptions(opts)
 	if err != nil {
-		die(err)
+		return err
 	}
 	v := &vars{
 		Type:      fmt.Sprintf(`"%s"`, *query),
@@ -89,23 +82,22 @@ func main() {
 	}
 	var buf bytes.Buffer
 	if err := tmpl.Execute(&buf, v); err != nil {
-		die(err)
+		return err
 	}
 	formatted, err := format.Source(buf.Bytes())
 	if err != nil {
-		die(err)
+		return err
 	}
 	f := os.Stdout
 	if *output != "-" {
 		f, err = os.OpenFile(*output, os.O_TRUNC|os.O_CREATE|os.O_WRONLY, 0644)
 		if err != nil {
-			die(err)
+			return err
 		}
+		defer f.Close()
 	}
 	if _, err := f.Write(formatted); err != nil {
-		die(err)
+		return err
 	}
-	if err := f.Close(); err != nil {
-		die(err)
-	}
+	return nil
 }
