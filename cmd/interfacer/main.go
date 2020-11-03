@@ -2,8 +2,10 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
+	"go/format"
 	"os"
 	"strings"
 	"text/template"
@@ -85,6 +87,14 @@ func main() {
 	} else {
 		v.InterfaceName = *as
 	}
+	var buf bytes.Buffer
+	if err := tmpl.Execute(&buf, v); err != nil {
+		die(err)
+	}
+	formatted, err := format.Source(buf.Bytes())
+	if err != nil {
+		die(err)
+	}
 	f := os.Stdout
 	if *output != "-" {
 		f, err = os.OpenFile(*output, os.O_TRUNC|os.O_CREATE|os.O_WRONLY, 0644)
@@ -92,8 +102,10 @@ func main() {
 			die(err)
 		}
 	}
-	err = nonil(tmpl.Execute(f, v), f.Close())
-	if err != nil {
+	if _, err := f.Write(formatted); err != nil {
+		die(err)
+	}
+	if err := f.Close(); err != nil {
 		die(err)
 	}
 }
