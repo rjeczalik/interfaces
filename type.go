@@ -143,4 +143,15 @@ func fixup(typ *Type, q *Query) {
 	}
 
 	typ.Name = strings.Replace(typ.Name, q.Package, path.Base(q.Package), -1)
+	typ.ImportPath = trimVendorPath(typ.ImportPath)
+}
+
+// trimVendorPath removes the vendor dir prefix from a package path.
+// example: github.com/foo/bar/vendor/github.com/pkg/errors -> github.com/pkg/errors.
+func trimVendorPath(p string) string {
+	parts := strings.Split(p, "/vendor/")
+	if len(parts) == 1 {
+		return p
+	}
+	return strings.TrimLeft(path.Join(parts[1:]...), "/")
 }
