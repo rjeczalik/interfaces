@@ -64,7 +64,7 @@ func appendTemplate(typ string, v *vars, w io.Writer) error {
 	return f.appendTemplate(v, w)
 }
 
-var tmpl = mustTemplate(`// Created by structer; DO NOT EDIT
+var tmpl = mustTemplate(`// Created by structer; DO NOT EDIT.
 
 package {{.PackageName}}
 {{if (eq (.Deps | len) 1)}}{{println}}import "{{(index .Deps 0)}}"{{println}}{{else if (gt (.Deps | len) 1)}}{{println}}import ({{println}}{{range .Deps}}	"{{.}}"{{println}}{{end}}){{println}}{{end}}
