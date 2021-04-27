@@ -112,7 +112,7 @@ func buildInterfaceForPkg(pkg *loader.PackageInfo, opts *Options) (Interface, er
 		if !ok {
 			continue
 		}
-		if tmp.Obj().Pos() == obj.Pos() {
+		if tmp.Obj() == obj {
 			typ = tmp
 			break
 		}
