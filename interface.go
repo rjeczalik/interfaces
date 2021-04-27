@@ -108,9 +108,12 @@ func buildInterfaceForPkg(pkg *loader.PackageInfo, opts *Options) (Interface, er
 		if obj.Name() != opts.Query.TypeName || obj.Pkg().Path() != opts.Query.Package {
 			continue
 		}
-		var ok bool
-		typ, ok = obj.Type().(*types.Named)
-		if ok {
+		tmp, ok := obj.Type().(*types.Named)
+		if !ok {
+			continue
+		}
+		if tmp.Obj() == obj {
+			typ = tmp
 			break
 		}
 	}
