@@ -12,7 +12,7 @@ Generates an interface for a named type.
 
 *Installation*
 ```bash
-~ $ go get github.com/rjeczalik/interfaces/cmd/interfacer
+~ $ go install github.com/rjeczalik/interfaces/cmd/interfacer@latest
 ```
 
 *Usage*
