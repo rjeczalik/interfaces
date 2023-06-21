@@ -9,6 +9,15 @@ import (
 	"github.com/rjeczalik/interfaces"
 )
 
+type Generic1[A any] struct {
+	Value A
+}
+
+type Generic2[A any, B any] struct {
+	Value  A
+	Value2 B
+}
+
 type ExampleFoo int
 
 type ExampleBar struct{}
@@ -35,6 +44,14 @@ func (ExampleBaz) D(*map[interface{}]struct{}, interface{}) (chan struct{}, []in
 
 func (*ExampleBaz) E(*[]map[*flag.FlagSet]struct{}, [3]string) {}
 
+func (*ExampleBaz) F(v Generic1[io.Writer]) (Generic2[io.Writer, ExampleFoo], int) {
+	return Generic2[io.Writer, ExampleFoo]{}, 0
+}
+
+func (*ExampleBaz) G(v Generic2[string, io.Writer]) (Generic1[int], int) {
+	return Generic1[int]{}, 0
+}
+
 func ExampleNew() {
 	i, err := interfaces.New(`github.com/rjeczalik/interfaces.ExampleBaz`)
 	if err != nil {
@@ -55,6 +72,8 @@ func ExampleNew() {
 	// C(map[string]int, *interfaces.Options, *http.Client) (chan []string, error)
 	// D(*map[interface{}]struct{}, interface{}) (chan struct{}, []interface{})
 	// E(*[]map[*flag.FlagSet]struct{}, [3]string)
+	// F(interfaces_test.Generic1[io.Writer]) (interfaces_test.Generic2[io.Writer, interfaces_test.ExampleFoo], int)
+	// G(interfaces_test.Generic2[string, io.Writer]) (interfaces_test.Generic1[int], int)
 	// Dependencies:
 	// flag
 	// github.com/rjeczalik/interfaces
