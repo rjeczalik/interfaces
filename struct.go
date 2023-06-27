@@ -171,7 +171,7 @@ func toFieldName(s string) string {
 	upper := true
 	i := 0
 	for _, c := range r {
-		if strings.IndexRune(nameEscapeChars, c) != -1 {
+		if strings.ContainsRune(nameEscapeChars, c) {
 			upper = true
 			continue
 		}
