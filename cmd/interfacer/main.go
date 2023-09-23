@@ -58,13 +58,22 @@ func run() error {
 	if *output == "" {
 		return errors.New("empty -o flag value; see -help for details")
 	}
+	packageName := ""
+	interfaceName := ""
+	if i := strings.IndexRune(*as, '.'); i != -1 {
+		packageName = (*as)[:i]
+		interfaceName = (*as)[i+1:]
+	} else {
+		interfaceName = *as
+	}
 	q, err := interfaces.ParseQuery(*query)
 	if err != nil {
 		return err
 	}
 	opts := &interfaces.Options{
-		Query:      q,
-		Unexported: *all,
+		Query:       q,
+		Unexported:  *all,
+		PackageName: packageName,
 	}
 	i, err := interfaces.NewWithOptions(opts)
 	if err != nil {
@@ -75,12 +84,8 @@ func run() error {
 		Deps:      i.Deps(),
 		Interface: i,
 	}
-	if i := strings.IndexRune(*as, '.'); i != -1 {
-		v.PackageName = (*as)[:i]
-		v.InterfaceName = (*as)[i+1:]
-	} else {
-		v.InterfaceName = *as
-	}
+	v.PackageName = packageName
+	v.InterfaceName = interfaceName
 	var buf bytes.Buffer
 	if err := tmpl.Execute(&buf, v); err != nil {
 		return err
