@@ -124,7 +124,10 @@ func (typ *Type) setFromComposite(t compositeType, depth int, orig types.Type) {
 	typ.setFromType(t.Elem(), depth+1, orig)
 }
 
-func fixup(typ *Type, q *Query) {
+func fixup(typ *Type, opts *Options) {
+	query := opts.Query
+	packageName := opts.PackageName
+
 	// Hacky fixup for renaming:
 	//
 	//   GeoAdd(string, []*github.com/go-redis/redis.GeoLocation) *redis.IntCmd
@@ -137,11 +140,11 @@ func fixup(typ *Type, q *Query) {
 
 	// when include other package struct
 	if typ.ImportPath != "" && typ.IsComposite {
-		if typ.ImportPath == q.Package {
+		if typ.ImportPath == query.Package {
 			typ.Name = strings.Replace(typ.Name, typ.ImportPath, typ.Package, -1)
 		}
 
-		if typ.ImportPath != q.Package {
+		if typ.ImportPath != query.Package {
 			pkgIdx := strings.LastIndex(typ.ImportPath, typ.Package)
 			if 0 < pkgIdx {
 				typ.Name = strings.Replace(typ.Name, typ.ImportPath[:pkgIdx], "", -1)
@@ -149,8 +152,13 @@ func fixup(typ *Type, q *Query) {
 		}
 	}
 
-	typ.Name = strings.Replace(typ.Name, q.Package, path.Base(q.Package), -1)
+	typ.Name = strings.Replace(typ.Name, query.Package, path.Base(query.Package), -1)
 	typ.ImportPath = trimVendorPath(typ.ImportPath)
+
+	if typ.Package == packageName {
+		typ.Package = ""
+		typ.ImportPath = ""
+	}
 }
 
 // trimVendorPath removes the vendor dir prefix from a package path.

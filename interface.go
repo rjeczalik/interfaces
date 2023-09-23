@@ -57,7 +57,9 @@ func (i Interface) Deps() []string {
 	}
 	deps := make([]string, 0, len(pkgs))
 	for pkg := range pkgs {
-		deps = append(deps, pkg)
+		if pkg != "" {
+			deps = append(deps, pkg)
+		}
 	}
 	sort.Strings(deps)
 	return deps
@@ -133,11 +135,11 @@ func buildInterfaceForPkg(pkg *packages.Package, opts *Options) (Interface, erro
 		}
 		for i := range fn.Ins {
 			fn.Ins[i] = newType(ins.At(i))
-			fixup(&fn.Ins[i], opts.Query)
+			fixup(&fn.Ins[i], opts)
 		}
 		for i := range fn.Outs {
 			fn.Outs[i] = newType(outs.At(i))
-			fixup(&fn.Outs[i], opts.Query)
+			fixup(&fn.Outs[i], opts)
 		}
 		inter = append(inter, fn)
 	}
