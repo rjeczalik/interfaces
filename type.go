@@ -65,6 +65,8 @@ func (typ *Type) setFromType(t types.Type, depth int, orig types.Type) {
 	case *types.Map:
 		typ.setFromComposite(t, depth, orig)
 		typ.setFromType(t.Key(), depth+1, orig)
+	case *types.Alias:
+		typ.setFromType(t.Underlying(), depth+1, orig)
 	case compositeType:
 		typ.setFromComposite(t, depth, orig)
 	default:
