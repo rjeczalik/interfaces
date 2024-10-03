@@ -42,9 +42,10 @@ func (q *Query) valid() error {
 
 // Options is used for altering behavior of New() function.
 type Options struct {
-	Query      *Query         // a named type
-	Context    *build.Context // build context; see go/build godoc for details
-	Unexported bool           // whether to include unexported methods
+	Query       *Query         // a named type
+	PackageName string         // name of package to generate interface for
+	Context     *build.Context // build context; see go/build godoc for details
+	Unexported  bool           // whether to include unexported methods
 
 	CSVHeader  []string
 	CSVRecord  []string
