@@ -125,7 +125,8 @@ func buildInterfaceForPkg(pkg *loader.PackageInfo, opts *Options) (Interface, er
 	collectMethods(methods, typ, 0, nil)
 	for _, method := range methods {
 		// TODO(rjeczalik): read rune
-		if unicode.IsLower(rune(method.Name()[0])) && !opts.Unexported {
+		isUnexported := method.Name()[0] == '_' || unicode.IsLower(rune(method.Name()[0]))
+		if isUnexported && !opts.Unexported {
 			continue
 		}
 		sig, ok := method.Type().(*types.Signature)
