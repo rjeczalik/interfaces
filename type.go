@@ -101,6 +101,13 @@ func (typ *Type) setFromSignature(t *types.Signature) {
 func (typ *Type) setFromNamed(t *types.Named) {
 	if typ.Name == "" {
 		typ.Name = t.Obj().Name()
+		if typeArgs := t.TypeArgs(); typeArgs != nil && typeArgs.Len() > 0 {
+			argValues := make([]string, typeArgs.Len())
+			for i := 0; i < typeArgs.Len(); i++ {
+				argValues[i] = typeArgs.At(i).String()
+			}
+			typ.Name = fmt.Sprintf("%s[%s]", typ.Name, strings.Join(argValues, ", "))
+		}
 	}
 	if typ.Package != "" || typ.ImportPath != "" {
 		return
